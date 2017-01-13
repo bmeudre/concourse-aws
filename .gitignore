@@ -16,3 +16,4 @@ bin/
 cluster.yml
 cluster.yaml
 secrets.yml
+.idea

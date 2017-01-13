@@ -13,7 +13,7 @@ var validConfigs = []struct {
 		providedYaml: `
 ---
 prefix: sample
-region: ap-northeast-1
+region: us-west-2
 key_name: cw_kuoka
 subnet_ids:
   - subnet-11111914
@@ -35,7 +35,7 @@ ssl_certificate_arn: "arn://dummydummy"
 `,
 		expectedConfig: Config{
 			Prefix:                   "sample",
-			Region:                   "ap-northeast-1",
+			Region:                   "us-west-2",
 			KeyName:                  "cw_kuoka",
 			SubnetIds:                []string{"subnet-11111914", "subnet-2222fc48"},
 			AccessibleCIDRS:          "123.123.234.234/32,234.234.234.234/32",

@@ -2,11 +2,11 @@
 # https://dzone.com/articles/graceful-shutdown-using-aws-autoscaling-groups-and
 
 resource "aws_sqs_queue" "graceful_termination_queue" {
-  name = "${var.prefix}graceful_termination_queue"
+  name = "${title(var.prefix)}ConcourseGracefulTerminationQueue"
 }
 
 resource "aws_iam_role" "autoscaling_role" {
-name = "${var.prefix}autoscaling_role"
+name = "${title(var.prefix)}ConcourseAutoscalingRole"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -25,7 +25,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "lifecycle_hook_autoscaling_policy" {
-  name = "lifecycle_hook_autoscaling_policy"
+  name = "LifecycleHookAutoscaling"
   role = "${aws_iam_role.autoscaling_role.id}"
   policy = <<EOF
 {

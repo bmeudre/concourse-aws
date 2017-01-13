@@ -3,6 +3,42 @@ provider "aws" {
   region = "${var.aws_region}"
 }
 
+# Create an IAM role for Concourse workers, allow S3 access - https://github.com/concourse/s3-resource
+resource "aws_iam_role" "worker_iam_role" {
+  name = "worker_iam_role"
+  path = "/"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {"AWS": "*"},
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_instance_profile" "worker_iam_instance_profile" {
+  name = "worker_iam_instance_profile"
+  roles = ["${aws_iam_role.worker_iam_role.name}"]
+}
+
+resource "aws_iam_policy_attachment" "iam-ecr-policy-attach" {
+  name = "ecr-policy-attachment"
+  roles = ["${aws_iam_role.worker_iam_role.name}"]
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
+}
+
+resource "aws_iam_policy_attachment" "iam-s3-policy-attach" {
+  name = "ecr-policy-attachment"
+  roles = ["${aws_iam_role.worker_iam_role.name}"]
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+}
+
 #module "postgres" {
 #    source = "./postgres"
 #    access_allowed_security_groups = "${aws_security_group.atc.id}"
@@ -11,7 +47,7 @@ provider "aws" {
 module "autoscaling_hooks" {
     source = "./autoscaling/hooks/enabled"
     target_asg_name = "${aws_autoscaling_group.worker-asg.name}"
-    prefix = "${var.prefix}"
+    prefix = "${var.prefix}-concourse-"
 }
 
 module "autoscaling_schedule" {
@@ -28,7 +64,7 @@ module "autoscaling_utilization" {
 }
 
 resource "aws_elb" "web-elb" {
-  name = "${var.prefix}concourse-lb"
+  name = "${var.prefix}-concourse-lb"
 
   # The same availability zone as our instances
   # Only one of SubnetIds or AvailabilityZones may be specified
@@ -65,7 +101,7 @@ resource "aws_autoscaling_group" "web-asg" {
   # See "Phasing in" an Autoscaling Group? https://groups.google.com/forum/#!msg/terraform-tool/7Gdhv1OAc80/iNQ93riiLwAJ
   # * Recreation of the launch configuration triggers recreation of this ASG and its EC2 instances
   # * Modification to the lc (change to referring AMI) triggers recreation of this ASG
-  name = "${var.prefix}${aws_launch_configuration.web-lc.name}${var.ami}"
+  name = "${var.prefix}-concourse-${aws_launch_configuration.web-lc.name}-${var.ami}"
   availability_zones = ["${split(",", var.availability_zones)}"]
   max_size = "${var.asg_max}"
   min_size = "${var.asg_min}"
@@ -75,7 +111,7 @@ resource "aws_autoscaling_group" "web-asg" {
   vpc_zone_identifier = ["${split(",", var.subnet_id)}"]
   tag {
     key = "Name"
-    value = "${var.prefix}web"
+    value = "${var.prefix}-concourse-web"
     propagate_at_launch = "true"
   }
   lifecycle {
@@ -84,7 +120,7 @@ resource "aws_autoscaling_group" "web-asg" {
 }
 
 resource "aws_autoscaling_group" "worker-asg" {
-  name = "${var.prefix}${aws_launch_configuration.worker-lc.name}${var.ami}"
+  name = "${var.prefix}-concourse-${aws_launch_configuration.worker-lc.name}-${var.ami}"
   availability_zones = ["${split(",", var.availability_zones)}"]
   max_size = "${var.asg_max}"
   min_size = "${var.asg_min}"
@@ -93,7 +129,7 @@ resource "aws_autoscaling_group" "worker-asg" {
   vpc_zone_identifier = ["${split(",", var.subnet_id)}"]
   tag {
     key = "Name"
-    value = "${var.prefix}worker"
+    value = "${var.prefix}-concourse-worker"
     propagate_at_launch = "true"
   }
   lifecycle {
@@ -108,7 +144,7 @@ resource "aws_launch_configuration" "web-lc" {
   image_id = "${var.ami}"
   instance_type = "${var.instance_type}"
   security_groups = ["${aws_security_group.default.id}","${aws_security_group.atc.id}","${aws_security_group.tsa.id}"]
-  user_data = "${template_cloudinit_config.web.rendered}"
+  user_data = "${data.template_cloudinit_config.web.rendered}"
   key_name = "${var.key_name}"
   associate_public_ip_address = true
   lifecycle {
@@ -121,10 +157,10 @@ resource "aws_launch_configuration" "worker-lc" {
   image_id = "${var.ami}"
   instance_type = "${var.instance_type}"
   security_groups = ["${aws_security_group.default.id}", "${aws_security_group.worker.id}"]
-  user_data = "${template_cloudinit_config.worker.rendered}"
+  user_data = "${data.template_cloudinit_config.worker.rendered}"
   key_name = "${var.key_name}"
   associate_public_ip_address = true
-  iam_instance_profile = "${var.worker_instance_profile}"
+  iam_instance_profile = "${var.worker_instance_profile != "" ? var.worker_instance_profile : aws_iam_instance_profile.worker_iam_instance_profile.id}"
   root_block_device {
     # For fast booting, we use gp2
     volume_type = "gp2"
@@ -141,7 +177,7 @@ resource "aws_launch_configuration" "worker-lc" {
     #
     # Or the following error when tried to run the job:
     # resource_pool: creating container directory: mkdir /var/lib/concourse/linux/depot/hntrh2no0mh: no space left on device
-    volume_size = "50"
+    volume_size = "60"
     delete_on_termination = true
   }
   lifecycle {
@@ -149,11 +185,11 @@ resource "aws_launch_configuration" "worker-lc" {
   }
 }
 
-resource "template_file" "install_concourse" {
+data "template_file" "install_concourse" {
   template = "${file("${path.module}/00_install_concourse.sh.tpl")}"
 }
 
-resource "template_file" "start_concourse_web" {
+data "template_file" "start_concourse_web" {
   template = "${file("${path.module}/01_start_concourse_web.sh.tpl")}"
 
   vars {
@@ -172,7 +208,7 @@ resource "template_file" "start_concourse_web" {
   }
 }
 
-resource "template_file" "start_concourse_worker" {
+data "template_file" "start_concourse_worker" {
   template = "${file("${path.module}/02_start_concourse_worker.sh.tpl")}"
 
   vars {
@@ -182,50 +218,56 @@ resource "template_file" "start_concourse_worker" {
   }
 }
 
-resource "template_cloudinit_config" "web" {
+data "template_cloudinit_config" "web" {
   # Make both turned off until https://github.com/hashicorp/terraform/issues/4794 is fixed
   gzip          = false
   base64_encode = false
 
   part {
     content_type = "text/x-shellscript"
-    content      = "${template_file.install_concourse.rendered}"
+    content      = "${data.template_file.install_concourse.rendered}"
   }
 
   part {
     content_type = "text/x-shellscript"
-    content      = "${template_file.start_concourse_web.rendered}"
-  }
-
-  lifecycle {
-    create_before_destroy = true
+    content      = "${data.template_file.start_concourse_web.rendered}"
   }
 }
 
-resource "template_cloudinit_config" "worker" {
+data "template_cloudinit_config" "worker" {
   # Make both turned off until https://github.com/hashicorp/terraform/issues/4794 is fixed
   gzip          = false
   base64_encode = false
 
   part {
     content_type = "text/x-shellscript"
-    content      = "${template_file.install_concourse.rendered}"
+    content      = "${data.template_file.install_concourse.rendered}"
   }
 
   part {
     content_type = "text/x-shellscript"
-    content      = "${template_file.start_concourse_worker.rendered}"
-  }
-
-  lifecycle {
-    create_before_destroy = true
+    content      = "${data.template_file.start_concourse_worker.rendered}"
   }
 }
 
 resource "aws_security_group" "default" {
-  name_prefix = "${var.prefix}default"
-  description = "concourse ${var.prefix}default"
+  name_prefix = "${var.prefix}-concourse-default"
+  description = "Concourse ${var.prefix}-concourse-default"
   vpc_id = "${var.vpc_id}"
+
+  ingress {
+    from_port = 123
+    to_port = 123
+    protocol = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port = 123
+    to_port = 123
+    protocol = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   # SSH access from a specific CIDRS
   ingress {
@@ -249,8 +291,8 @@ resource "aws_security_group" "default" {
 }
 
 resource "aws_security_group" "atc" {
-  name_prefix = "${var.prefix}atc"
-  description = "concourse ${var.prefix}atc"
+  name_prefix = "${var.prefix}-concourse-atc"
+  description = "Concourse ${var.prefix}-concourse-atc"
   vpc_id = "${var.vpc_id}"
 
   lifecycle {
@@ -279,8 +321,8 @@ resource "aws_security_group_rule" "allow_atc_to_worker_access" {
 }
 
 resource "aws_security_group" "tsa" {
-  name_prefix = "${var.prefix}tsa"
-  description = "concourse ${var.prefix}tsa"
+  name_prefix = "${var.prefix}-concourse-tsa"
+  description = "Concourse ${var.prefix}-concourse-tsa"
   vpc_id = "${var.vpc_id}"
 
   # outbound internet access
@@ -317,8 +359,8 @@ resource "aws_security_group_rule" "allow_external_lb_to_tsa_access" {
 }
 
 resource "aws_security_group" "worker" {
-  name_prefix = "${var.prefix}worker"
-  description = "concourse ${var.prefix}worker"
+  name_prefix = "${var.prefix}-concourse-worker"
+  description = "Concourse ${var.prefix}-concourse-worker"
   vpc_id = "${var.vpc_id}"
 
   # outbound internet access
@@ -335,8 +377,8 @@ resource "aws_security_group" "worker" {
 }
 
 resource "aws_security_group" "external_lb" {
-  name_prefix = "${var.prefix}lb"
-  description = "concourse ${var.prefix}lb"
+  name_prefix = "${var.prefix}-concourse-lb"
+  description = "Concourse ${var.prefix}-concourse-lb"
 
   vpc_id = "${var.vpc_id}"
 
@@ -368,8 +410,8 @@ resource "aws_security_group" "external_lb" {
 }
 
 resource "aws_security_group" "db" {
-  name_prefix = "${var.prefix}db"
-  description = "concourse ${var.prefix}db"
+  name_prefix = "${var.prefix}-concourse-db"
+  description = "Concourse ${var.prefix}-concourse-db"
   vpc_id = "${var.vpc_id}"
 
   # outbound internet access
@@ -397,20 +439,24 @@ resource "aws_security_group_rule" "allow_db_access_from_atc" {
 
 resource "aws_db_instance" "default" {
   depends_on = ["aws_security_group.db"]
-  identifier = "${var.prefix}db"
-  allocated_storage = "10"
+  identifier = "${var.prefix}-concourse-db"
+  allocated_storage = "20"
   engine = "postgres"
-  engine_version = "9.4.5"
+  engine_version = "9.5.4"
   instance_class = "${var.db_instance_class}"
   name = "concourse"
   username = "${var.db_username}"
   password = "${var.db_password}"
   vpc_security_group_ids = ["${aws_security_group.db.id}"]
   db_subnet_group_name = "${aws_db_subnet_group.db.id}"
+  backup_retention_period = 7
+  backup_window = "04:00-04:30"
+  maintenance_window = "sun:04:30-sun:05:30"
+  multi_az = "true"
 }
 
 resource "aws_db_subnet_group" "db" {
-  name = "${var.prefix}db"
-  description = "group of subnets for concourse db"
+  name = "${var.prefix}-concourse-db"
+  description = "Group of subnets for Concourse db"
   subnet_ids = ["${split(",", var.db_subnet_ids)}"]
 }

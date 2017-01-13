@@ -64,10 +64,10 @@ func mustBeIncludedIn(candidates []string) func(string) error {
 }
 
 func InteractivelyCreateConfig() *concourse.Config {
-	prefix := AskForRequiredInput("Prefix", AskOptions{Default: "concourse-"})
+	prefix := AskForRequiredInput("Prefix", AskOptions{Default: "mycompany"})
 
 	regions := ListRegions()
-	region := AskForRequiredInput("Region", AskOptions{Candidates: regions, Validate: mustBeIncludedIn(regions), Default: "ap-northeast-1"})
+	region := AskForRequiredInput("Region", AskOptions{Candidates: regions, Validate: mustBeIncludedIn(regions), Default: "us-west-2"})
 
 	out, _ := exec.Command("./my-latest-ami.sh").CombinedOutput()
 	latestAmiId := strings.TrimSpace(string(out))
@@ -104,8 +104,8 @@ func InteractivelyCreateConfig() *concourse.Config {
 
 	accessibleCIDRS := AskForRequiredInput("AccessibleCIDRS(commma separated)", AskOptions{Default: fmt.Sprintf("%s/32", ObtainExternalIp())})
 
-	dbInstanceClass := AskForRequiredInput("DB Instance Class", AskOptions{Default: "db.t2.micro"})
-	instanceType := AskForRequiredInput("Concourse Instance Type", AskOptions{Default: "t2.micro"})
+	dbInstanceClass := AskForRequiredInput("DB Instance Class", AskOptions{Default: "db.t2.medium"})
+	instanceType := AskForRequiredInput("Concourse Instance Type", AskOptions{Default: "t2.medium"})
 
 	asgMin := AskForRequiredInput("Min numbers of servers in ASG(Web, Worker)", AskOptions{Default: "0"})
 	asgMax := AskForRequiredInput("Max numbers of servers in ASG(Web, Worker)", AskOptions{Default: "2"})

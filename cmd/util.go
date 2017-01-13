@@ -14,7 +14,7 @@ import (
 )
 
 func ListRegions() []string {
-	svc := ec2.New(session.New(), &aws.Config{Region: aws.String("ap-northeast-1")})
+	svc := ec2.New(session.New(), &aws.Config{Region: aws.String("us-west-2")})
 
 	params := &ec2.DescribeRegionsInput{
 		DryRun: aws.Bool(false),

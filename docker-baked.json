@@ -7,7 +7,7 @@
     "type": "amazon-ebs",
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
-    "region": "ap-northeast-1",
+    "region": "us-west-2",
     "source_ami": "{{user `source_ami`}}",
     "instance_type": "t2.micro",
     "ssh_username": "ubuntu",
@@ -24,7 +24,6 @@
       "sudo apt-get update",
       "sudo apt-cache policy docker-engine",
       "sudo apt-get install docker-engine -y",
-      "#sudo service docker start",
       "sudo docker info",
       "sudo docker run hello-world"
     ]

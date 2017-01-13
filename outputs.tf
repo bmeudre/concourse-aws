@@ -1,5 +1,5 @@
 output "concourse_web_endpoint" {
-  value = "${template_file.start_concourse_web.vars.external_url}"
+  value = "${data.template_file.start_concourse_web.vars.external_url}"
 }
 
 output "concourse_web_elb_dns_name" {

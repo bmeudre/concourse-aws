@@ -18,7 +18,6 @@ docker info
 service docker status
 service docker stop
 
-#   --peer-ip $(cat peer_ip) \
 concourse worker \
   --work-dir $CONCOURSE_PATH \
   --peer-ip $(cat peer_ip) \

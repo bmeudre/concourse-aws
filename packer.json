@@ -7,8 +7,8 @@
     "type": "amazon-ebs",
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
-    "region": "ap-northeast-1",
-    "source_ami": "ami-5d38d93c",
+    "region": "us-west-2",
+    "source_ami": "ami-b7a114d7",
     "instance_type": "t2.micro",
     "ssh_username": "ubuntu",
     "ami_name": "packer-ubuntu-xenial-{{timestamp}}"
@@ -17,7 +17,9 @@
     "type": "shell",
     "inline": [
       "sudo apt-get update",
-      "sudo apt-get install linux-image-extra-$(uname -r) -y"
+      "sudo apt-get upgrade -y",
+      "sudo apt-get install htop python-pip ntp linux-image-extra-$(uname -r) -y",
+      "pip install awscli"
     ]
   }]
 }

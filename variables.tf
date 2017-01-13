@@ -1,3 +1,7 @@
+terraform {
+  required_version = "> 0.8.3"
+}
+
 variable "prefix" {
   description = "Prefix for every resource created by this template"
   default = "concourse-"  
@@ -5,7 +9,7 @@ variable "prefix" {
 
 variable "aws_region" {
   description = "The AWS region to create things in."
-  default = "us-east-1"
+  default = "us-west-2"
 }
 
 # ubuntu-trusty-14.04 (x64)
@@ -21,8 +25,8 @@ variable "ami" {
 }
 
 variable "availability_zones" {
-  default = "us-east-1b,us-east-1c,us-east-1d,us-east-1e"
-  description = "List of availability zones, use AWS CLI to find your "
+  default = "us-west-2a,us-west-2b,us-west-2c"
+  description = "List of availability zones, use AWS CLI to find yours"
 }
 
 variable "key_name" {
@@ -30,7 +34,7 @@ variable "key_name" {
 }
 
 variable "instance_type" {
-  default = "t2.micro"
+  default = "t2.medium"
   description = "AWS instance type"
 }
 
@@ -41,7 +45,7 @@ variable "asg_min" {
 
 variable "asg_max" {
   description = "Max numbers of servers in ASG"
-  default = "2"
+  default = "10"
 }
 
 variable "web_asg_desired" {
@@ -98,7 +102,8 @@ variable "db_password" {
 }
 
 variable "db_instance_class" {
-  description = "t2.micro"
+  description = "AWS RDS instance type"
+  default = "db.t2.small"
 }
 
 variable "tsa_host_key" {
