@@ -18,7 +18,7 @@ resource "aws_cloudwatch_metric_alarm" "worker-is-busy" {
     dimensions {
         AutoScalingGroupName = "${var.target_asg_name}"
     }
-    alarm_description = "This metric monitor ec2 cpu utilization"
+    alarm_description = "Monitors AWS EC2 CPU utilization for Concourse worker instances"
     alarm_actions = ["${aws_autoscaling_policy.add-worker.arn}"]
 }
 

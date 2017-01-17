@@ -14,7 +14,7 @@ resource "aws_autoscaling_schedule" "rem_workers_after_working_time" {
     max_size = 0
     desired_capacity = "${var.num_workers_during_non_working_time}"
     # 19:30 UTC
-    recurrence = "30 21 * * MON-FRI"
+    recurrence = "30 19 * * MON-FRI"
     autoscaling_group_name = "${var.target_asg_name}"
 }
 

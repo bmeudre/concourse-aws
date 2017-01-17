@@ -53,9 +53,9 @@ module "autoscaling_hooks" {
 module "autoscaling_schedule" {
     source = "./autoscaling/schedule/enabled"
     target_asg_name = "${aws_autoscaling_group.worker-asg.name}"
-    num_workers_during_working_time = 2
+    num_workers_during_working_time = 3
     max_num_workers_during_working_time = "${var.asg_max}"
-    num_workers_during_non_working_time = 0
+    num_workers_during_non_working_time = 1
 }
 
 module "autoscaling_utilization" {
@@ -138,9 +138,6 @@ resource "aws_autoscaling_group" "worker-asg" {
 }
 
 resource "aws_launch_configuration" "web-lc" {
-  # Omit launch configuration name to avoid collisions on create_before_destroy
-  # ref. https://github.com/hashicorp/terraform/issues/1109#issuecomment-97970885
-  #image_id = "${lookup(var.aws_amis, var.aws_region)}"
   image_id = "${var.ami}"
   instance_type = "${var.instance_type}"
   security_groups = ["${aws_security_group.default.id}","${aws_security_group.atc.id}","${aws_security_group.tsa.id}"]
@@ -153,7 +150,6 @@ resource "aws_launch_configuration" "web-lc" {
 }
 
 resource "aws_launch_configuration" "worker-lc" {
-  #image_id = "${lookup(var.aws_amis, var.aws_region)}"
   image_id = "${var.ami}"
   instance_type = "${var.instance_type}"
   security_groups = ["${aws_security_group.default.id}", "${aws_security_group.worker.id}"]
