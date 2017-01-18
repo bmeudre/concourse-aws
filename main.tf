@@ -55,7 +55,7 @@ module "autoscaling_schedule" {
     target_asg_name = "${aws_autoscaling_group.worker-asg.name}"
     num_workers_during_working_time = 3
     max_num_workers_during_working_time = "${var.asg_max}"
-    num_workers_during_non_working_time = 1
+    num_workers_during_non_working_time = 0
 }
 
 module "autoscaling_utilization" {
