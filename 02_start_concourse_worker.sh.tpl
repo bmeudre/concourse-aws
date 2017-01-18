@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 exec > /var/log/02_start_concourse_worker.log 2>&1
 set -x

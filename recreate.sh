@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function web() {
   terraform taint template_cloudinit_config.web && ./terraform.sh apply
