@@ -16,6 +16,7 @@
   "provisioners": [{
     "type": "shell",
     "inline": [
+      "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done",
       "uname -a",
       "sudo apt-get update",
       "sudo apt-get install apt-transport-https ca-certificates -y",
@@ -24,6 +25,9 @@
       "sudo apt-get update",
       "sudo apt-cache policy docker-engine",
       "sudo apt-get install docker-engine -y",
+      "sudo service docker stop",
+      "echo \"{\\\"storage-driver\\\":\\\"overlay2\\\"}\" | sudo tee /etc/docker/daemon.json",
+      "sudo service docker start",
       "sudo docker info",
       "sudo docker run hello-world"
     ]
