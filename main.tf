@@ -448,7 +448,6 @@ resource "aws_db_instance" "default" {
   backup_retention_period = 7
   backup_window = "04:00-04:30"
   maintenance_window = "sun:04:30-sun:05:30"
-  multi_az = "true"
 }
 
 resource "aws_db_subnet_group" "db" {
