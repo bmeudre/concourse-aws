@@ -9,12 +9,12 @@ resource "aws_autoscaling_policy" "add-worker" {
 resource "aws_cloudwatch_metric_alarm" "worker-is-busy" {
     alarm_name = "${var.target_asg_name}-is-busy"
     comparison_operator = "GreaterThanOrEqualToThreshold"
-    evaluation_periods = "2"
+    evaluation_periods = "3"
     metric_name = "CPUUtilization"
     namespace = "AWS/EC2"
     period = "120"
     statistic = "Average"
-    threshold = "80"
+    threshold = "85"
     dimensions {
         AutoScalingGroupName = "${var.target_asg_name}"
     }
