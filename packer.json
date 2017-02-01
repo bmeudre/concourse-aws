@@ -19,7 +19,10 @@
       "sudo apt-get update",
       "sudo apt-get upgrade -y",
       "sudo apt-get install htop jq python-pip ntp linux-image-extra-$(uname -r) -y",
-      "pip install awscli"
+      "pip install awscli",
+      "sudo add-apt-repository ppa:git-core/ppa -y",
+      "sudo apt-get update",
+      "sudo apt-get install git -y"
     ]
   }]
 }
