@@ -145,6 +145,9 @@ resource "aws_launch_configuration" "web-lc" {
   user_data = "${data.template_cloudinit_config.web.rendered}"
   key_name = "${var.key_name}"
   associate_public_ip_address = true
+  root_block_device {
+    volume_size = "40"
+  }
   lifecycle {
     create_before_destroy = true
   }
@@ -174,8 +177,7 @@ resource "aws_launch_configuration" "worker-lc" {
     #
     # Or the following error when tried to run the job:
     # resource_pool: creating container directory: mkdir /var/lib/concourse/linux/depot/hntrh2no0mh: no space left on device
-    volume_size = "60"
-    delete_on_termination = true
+    volume_size = "100"
   }
   lifecycle {
     create_before_destroy = true
