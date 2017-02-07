@@ -76,9 +76,9 @@ resource "aws_elb" "web-elb" {
 
   listener {
     instance_port = "${var.elb_listener_instance_port}"
-    instance_protocol = "http"
+    instance_protocol = "tcp"
     lb_port = "${var.elb_listener_lb_port}"
-    lb_protocol = "${var.elb_listener_lb_protocol}"
+    lb_protocol = "${var.elb_listener_lb_port == 80 ? "tcp" : "ssl"}"
     ssl_certificate_id = "${var.ssl_certificate_arn}"
   }
 
