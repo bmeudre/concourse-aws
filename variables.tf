@@ -25,8 +25,13 @@ variable "key_name" {
 }
 
 variable "instance_type" {
-  default = "t2.large"
+  default = "r4.large"
   description = "AWS instance type"
+}
+
+variable "spot_price" {
+  default = "0.15"
+  description = "The price to use for reserving spot instances."
 }
 
 variable "asg_min" {

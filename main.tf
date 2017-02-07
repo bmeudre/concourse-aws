@@ -156,6 +156,7 @@ resource "aws_launch_configuration" "web-lc" {
 resource "aws_launch_configuration" "worker-lc" {
   image_id = "${var.ami}"
   instance_type = "${var.instance_type}"
+  spot_price = "${var.spot_price}"
   security_groups = ["${aws_security_group.default.id}", "${aws_security_group.worker.id}"]
   user_data = "${data.template_cloudinit_config.worker.rendered}"
   key_name = "${var.key_name}"
