@@ -56,7 +56,7 @@ module "autoscaling_schedule" {
     num_workers_during_working_time = 3
     max_num_workers_during_working_time = "${var.asg_max}"
     num_workers_during_non_working_time = 1
-    max_num_workers_during_non_working_time = 1
+    max_num_workers_during_non_working_time = "${var.asg_max}"
 }
 
 module "autoscaling_utilization" {
