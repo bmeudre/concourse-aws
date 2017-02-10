@@ -10,6 +10,7 @@
     "region": "us-west-2",
     "source_ami": "{{user `source_ami`}}",
     "instance_type": "r4.large",
+    "ebs_optimized": true,
     "enhanced_networking": true,
     "ssh_username": "ubuntu",
     "ami_name": "packer-concourse-v2.6.0-{{timestamp}}"

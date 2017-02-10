@@ -10,6 +10,7 @@
     "region": "us-west-2",
     "source_ami": "ami-7c803d1c",
     "instance_type": "r4.large",
+    "ebs_optimized": true,
     "enhanced_networking": true,
     "ssh_username": "ubuntu",
     "ami_name": "packer-ubuntu-xenial-{{timestamp}}"
