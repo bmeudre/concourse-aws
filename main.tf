@@ -145,6 +145,7 @@ resource "aws_launch_configuration" "web-lc" {
   user_data = "${data.template_cloudinit_config.web.rendered}"
   key_name = "${var.key_name}"
   associate_public_ip_address = true
+  ebs_optimized = true
   root_block_device {
     volume_size = "40"
   }
@@ -162,23 +163,10 @@ resource "aws_launch_configuration" "worker-lc" {
   key_name = "${var.key_name}"
   associate_public_ip_address = true
   iam_instance_profile = "${var.worker_instance_profile != "" ? var.worker_instance_profile : aws_iam_instance_profile.worker_iam_instance_profile.id}"
+  ebs_optimized = true
   root_block_device {
-    # For fast booting, we use gp2
     volume_type = "gp2"
-    # You need enough capacity to avoid the following error while docker export & untar'ing:
-    #
-    # *snip*
-    # tar: etc/alternatives: Cannot stat: Input/output error
-    # tar: etc: Cannot stat: Input/output error
-    # tar: dev: Cannot stat: Input/output error
-    # tar: bin: Cannot stat: Input/output error
-    # tar: Exiting with failure status due to previous errors
-    #
-    # resource script '/opt/resource/in [/tmp/build/get]' failed: exit status 2
-    #
-    # Or the following error when tried to run the job:
-    # resource_pool: creating container directory: mkdir /var/lib/concourse/linux/depot/hntrh2no0mh: no space left on device
-    volume_size = "100"
+    volume_size = "120"
   }
   lifecycle {
     create_before_destroy = true
