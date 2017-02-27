@@ -20,6 +20,7 @@ service docker status
 service docker stop
 
 concourse worker \
+  --garden-log-level error \
   --work-dir $CONCOURSE_PATH \
   --peer-ip $(cat peer_ip) \
   --bind-ip $(cat peer_ip) \
