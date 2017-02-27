@@ -11,7 +11,6 @@ echo "${tsa_host}" > $CONCOURSE_PATH/tsa_host
 echo "${tsa_public_key}" > $CONCOURSE_PATH/tsa_public_key
 echo "${tsa_worker_private_key}" > $CONCOURSE_PATH/tsa_worker_private_key
 curl http://169.254.169.254/latest/meta-data/local-ipv4 > $CONCOURSE_PATH/peer_ip
-curl http://169.254.169.254/latest/meta-data/instance-type > $CONCOURSE_PATH/instance_type
 
 cd $CONCOURSE_PATH
 
@@ -28,7 +27,6 @@ concourse worker \
   --tsa-host $(cat tsa_host) \
   --tsa-public-key tsa_public_key \
   --tsa-worker-private-key tsa_worker_private_key \
-  --tag $(cat instance_type) \
   2>&1 > $CONCOURSE_PATH/concourse_worker.log &
 
 echo $! > $CONCOURSE_PATH/pid
