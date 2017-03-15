@@ -147,7 +147,8 @@ resource "aws_launch_configuration" "web-lc" {
   associate_public_ip_address = true
   ebs_optimized = true
   root_block_device {
-    volume_size = "40"
+    volume_type = "gp2"
+    volume_size = "30"
   }
   lifecycle {
     create_before_destroy = true
