@@ -433,6 +433,7 @@ resource "aws_db_instance" "default" {
   engine = "postgres"
   engine_version = "9.5.4"
   instance_class = "${var.db_instance_class}"
+  storage_type = "gp2"
   name = "concourse"
   username = "${var.db_username}"
   password = "${var.db_password}"
