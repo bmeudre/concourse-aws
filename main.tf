@@ -1,6 +1,7 @@
 # Specify the provider and access details
 provider "aws" {
   region = "${var.aws_region}"
+  profile = "dg-dev-qa"
 }
 
 # Create an IAM role for Concourse workers, allow S3 access - https://github.com/concourse/s3-resource
@@ -53,7 +54,7 @@ module "autoscaling_hooks" {
 module "autoscaling_schedule" {
     source = "./autoscaling/schedule/enabled"
     target_asg_name = "${aws_autoscaling_group.worker-asg.name}"
-    num_workers_during_working_time = 3
+    num_workers_during_working_time = "${var.worker_asg_desired}"
     max_num_workers_during_working_time = "${var.asg_max}"
     num_workers_during_non_working_time = 1
     max_num_workers_during_non_working_time = "${var.asg_max}"
