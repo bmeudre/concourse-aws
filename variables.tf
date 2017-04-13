@@ -29,19 +29,29 @@ variable "instance_type" {
   description = "AWS instance type"
 }
 
+variable "worker_instance_type" {
+  default = "r4.xlarge"
+  description = "Concourse CI worker AWS instance type"
+}
+
 variable "spot_price" {
   default = "0.15"
   description = "The price to use for reserving spot instances."
 }
 
+variable "worker_spot_price" {
+  default = "0.6"
+  description = "The price to use for reserving worker spot instances."
+}
+
 variable "asg_min" {
   description = "Min numbers of servers in ASG"
-  default = "0"
+  default = "1"
 }
 
 variable "asg_max" {
   description = "Max numbers of servers in ASG"
-  default = "10"
+  default = "2"
 }
 
 variable "web_asg_desired" {
@@ -52,7 +62,7 @@ variable "web_asg_desired" {
 
 variable "worker_asg_desired" {
   description = "Desired numbers of servers in ASG"
-  default = "2"
+  default = "1"
 }
 
 variable "elb_listener_lb_port" {
