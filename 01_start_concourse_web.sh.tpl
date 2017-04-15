@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+iptables -I FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
+iptables-save
+
 exec > /var/log/01_start_concourse_web.log 2>&1
 set -x
 

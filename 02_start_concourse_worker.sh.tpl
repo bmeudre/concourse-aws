@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+iptables -I FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
+iptables-save
+
 exec > /var/log/02_start_concourse_worker.log 2>&1
 set -x
 
@@ -13,10 +16,6 @@ echo "${tsa_worker_private_key}" > $CONCOURSE_PATH/tsa_worker_private_key
 curl http://169.254.169.254/latest/meta-data/local-ipv4 > $CONCOURSE_PATH/peer_ip
 
 cd $CONCOURSE_PATH
-
-docker info
-service docker status
-service docker stop
 
 concourse worker \
   --garden-log-level error \

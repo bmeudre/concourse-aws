@@ -2,7 +2,7 @@
   "builders": [{
     "type": "amazon-ebs",
     "region": "us-west-2",
-    "source_ami": "ami-fa27b39a",
+    "source_ami": "ami-efd0428f",
     "instance_type": "r4.large",
     "ebs_optimized": true,
     "enhanced_networking": true,
@@ -14,12 +14,7 @@
     "inline": [
       "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done",
       "sudo apt-get update -y",
-      "sudo apt-get upgrade -y",
-      "sudo apt-get install htop jq python3-pip python3-setuptools python3-yaml -y",
-      "pip3 install awscli",
-      "sudo add-apt-repository ppa:git-core/ppa -y",
-      "sudo apt-get update",
-      "sudo apt-get install git -y --no-install-recommends"
+      "sudo apt-get install htop jq git -y"
     ]
   }]
 }

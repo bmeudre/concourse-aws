@@ -1,7 +1,6 @@
 # Specify the provider and access details
 provider "aws" {
   region = "${var.aws_region}"
-  profile = "dg-dev-qa"
 }
 
 # Create an IAM role for Concourse workers, allow S3 access - https://github.com/concourse/s3-resource
@@ -95,7 +94,7 @@ resource "aws_elb" "web-elb" {
     unhealthy_threshold = 2
     timeout = 3
     target = "TCP:${var.elb_listener_instance_port}"
-    interval = 30
+    interval = 5
   }
 }
 
