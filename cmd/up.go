@@ -105,7 +105,7 @@ func InteractivelyCreateConfig() *concourse.Config {
 	accessibleCIDRS := AskForRequiredInput("AccessibleCIDRS(commma separated)", AskOptions{Default: fmt.Sprintf("%s/32", ObtainExternalIp())})
 
 	dbInstanceClass := AskForRequiredInput("DB Instance Class", AskOptions{Default: "db.t2.medium"})
-	instanceType := AskForRequiredInput("Concourse Instance Type", AskOptions{Default: "t2.medium"})
+	instanceType := AskForRequiredInput("Concourse Instance Type", AskOptions{Default: "t2.large"})
 
 	asgMin := AskForRequiredInput("Min numbers of servers in ASG(Web, Worker)", AskOptions{Default: "0"})
 	asgMax := AskForRequiredInput("Max numbers of servers in ASG(Web, Worker)", AskOptions{Default: "2"})

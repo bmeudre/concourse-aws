@@ -113,15 +113,7 @@ Note: Saved/restored files
    ```
    See http://concourse.ci/hello-world.html for more information and the `hello.yml` referenced in the above example.
 
-8. Modify autoscaling groups' desired capacity to scale out/in webs or workers.
-
-## Why did you actually created this?
-
-[BOSH](https://github.com/cloudfoundry/bosh) looks [very promising to me according to what problems it solves](https://bosh.io/docs/problems.html).
-However I was too lazy to learn it for now mainly because:
-
-* I'm not going to use IaaS other than AWS for the time being
-* learning it to JUST try Concourse CI might be too much in the short term though
+8. Modify autoscaling groups' desired capacity to scale out/in webs or workers
 
 ## You may also find those projects useful
 
