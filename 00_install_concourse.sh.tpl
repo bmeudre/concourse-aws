@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if ! which concourse; then
-  curl -v -L https://github.com/concourse/concourse/releases/download/v2.7.3/concourse_linux_amd64 -o concourse
+  curl -v -L https://github.com/concourse/concourse/releases/download/v2.7.4/concourse_linux_amd64 -o concourse
   chmod +x concourse
   mv concourse /usr/local/bin/concourse
 fi
