@@ -66,10 +66,6 @@ module "autoscaling_utilization" {
 
 resource "aws_elb" "web-elb" {
   name = "${var.prefix}-concourse-lb"
-
-  # The same availability zone as our instances
-  # Only one of SubnetIds or AvailabilityZones may be specified
-  #availability_zones = ["${split(",", var.availability_zones)}"]
   security_groups = ["${aws_security_group.external_lb.id}"]
   subnets = ["${split(",", var.subnet_id)}"]
   cross_zone_load_balancing = "true"
