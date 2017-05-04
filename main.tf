@@ -24,7 +24,7 @@ EOF
 
 resource "aws_iam_instance_profile" "worker_iam_instance_profile" {
   name = "worker_iam_instance_profile"
-  roles = ["${aws_iam_role.worker_iam_role.name}"]
+  role = "${aws_iam_role.worker_iam_role.name}"
 }
 
 resource "aws_iam_policy_attachment" "iam-ecr-policy-attach" {
@@ -144,7 +144,6 @@ resource "aws_launch_configuration" "web-lc" {
   security_groups = ["${aws_security_group.default.id}","${aws_security_group.atc.id}","${aws_security_group.tsa.id}"]
   user_data = "${data.template_cloudinit_config.web.rendered}"
   key_name = "${var.key_name}"
-  associate_public_ip_address = true
   ebs_optimized = true
   root_block_device {
     volume_type = "gp2"
@@ -162,7 +161,6 @@ resource "aws_launch_configuration" "worker-lc" {
   security_groups = ["${aws_security_group.default.id}", "${aws_security_group.worker.id}"]
   user_data = "${data.template_cloudinit_config.worker.rendered}"
   key_name = "${var.key_name}"
-  associate_public_ip_address = true
   iam_instance_profile = "${var.worker_instance_profile != "" ? var.worker_instance_profile : aws_iam_instance_profile.worker_iam_instance_profile.id}"
   ebs_optimized = true
   root_block_device {
