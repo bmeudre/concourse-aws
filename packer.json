@@ -7,7 +7,7 @@
     "ebs_optimized": true,
     "enhanced_networking": true,
     "ssh_username": "ubuntu",
-    "ami_name": "packer-concourse-v2.7.4-{{timestamp}}"
+    "ami_name": "packer-concourse-v2.7.7-{{timestamp}}"
   }],
   "provisioners": [{
     "type": "shell",
@@ -15,7 +15,7 @@
       "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done",
       "sudo apt-get update -y",
       "sudo apt-get install htop jq git -y",
-      "curl -L https://github.com/concourse/concourse/releases/download/v2.7.4/concourse_linux_amd64 -o concourse",
+      "curl -L https://github.com/concourse/concourse/releases/download/v2.7.7/concourse_linux_amd64 -o concourse",
       "chmod +x concourse",
       "sudo mv concourse /usr/local/bin/concourse"
     ]
