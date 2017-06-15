@@ -425,7 +425,7 @@ resource "aws_db_instance" "default" {
   identifier = "${var.prefix}-concourse-db"
   allocated_storage = "20"
   engine = "postgres"
-  engine_version = "9.5.4"
+  engine_version = "9.6.2"
   instance_class = "${var.db_instance_class}"
   storage_type = "gp2"
   name = "concourse"
