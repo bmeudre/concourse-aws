@@ -425,7 +425,7 @@ resource "aws_db_instance" "default" {
   identifier = "${var.prefix}-concourse-db"
   allocated_storage = "20"
   engine = "postgres"
-  engine_version = "9.6.2"
+  engine_version = "9.6.3"
   instance_class = "${var.db_instance_class}"
   storage_type = "gp2"
   name = "concourse"
@@ -433,6 +433,7 @@ resource "aws_db_instance" "default" {
   password = "${var.db_password}"
   vpc_security_group_ids = ["${aws_security_group.db.id}"]
   db_subnet_group_name = "${aws_db_subnet_group.db.id}"
+  storage_encrypted = true
   backup_retention_period = 7
   backup_window = "04:00-04:30"
   maintenance_window = "sun:04:30-sun:05:30"
