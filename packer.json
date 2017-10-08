@@ -5,7 +5,7 @@
     "source_ami": "ami-6e1a0117",
     "instance_type": "r4.large",
     "ebs_optimized": true,
-    "enhanced_networking": true,
+    "ena_support": true,
     "ssh_username": "ubuntu",
     "ami_name": "packer-concourse-v3.4.1-{{timestamp}}"
   }],
