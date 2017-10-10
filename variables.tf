@@ -1,10 +1,10 @@
 terraform {
-  required_version = ">= 0.8.6"
+  required_version = ">= 0.9.11"
 }
 
 variable "prefix" {
   description = "Prefix for every resource created by this template"
-  default = "concourse-"  
+  default = ""
 }
 
 variable "aws_region" {
@@ -24,19 +24,19 @@ variable "key_name" {
   description = "Name of AWS key pair"
 }
 
-variable "instance_type" {
-  default = "r4.large"
-  description = "AWS instance type"
+variable "web_instance_type" {
+  default = "t2.medium"
+  description = "Concourse CI web AWS instance type"
 }
 
 variable "worker_instance_type" {
-  default = "r4.xlarge"
+  default = "r4.large"
   description = "Concourse CI worker AWS instance type"
 }
 
-variable "spot_price" {
-  default = "0.15"
-  description = "The price to use for reserving spot instances."
+variable "web_spot_price" {
+  default = "0.04"
+  description = "The price to use for reserving web spot instances."
 }
 
 variable "worker_spot_price" {
