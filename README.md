@@ -4,8 +4,7 @@ http://www.slideshare.net/mumoshu/autoscaled-concourse-ci-on-aws-wo-bosh
 
 ## Recommended Usage: Using `concourse-aws` binary
 
-1. Install [packer](https://github.com/mitchellh/packer) and [terraform (0.8.7+)](https://github.com/hashicorp/terraform)
-  * for now, concourse-aws supports only terraform(< 0.7.0) due to this issue: https://github.com/hashicorp/terraform/issues/7971
+1. Install [packer](https://github.com/mitchellh/packer) and [terraform (1.0.7+)](https://github.com/hashicorp/terraform)
   
 2. Create 1 VPC and 2 subnets in it
 
@@ -20,6 +19,7 @@ git clone https://github.com/analytically/concourse-aws
 ```
 cd concourse-aws
 
+terraform init
 ./build-amis.sh
 ./concourse-aws up
 ```
@@ -91,6 +91,7 @@ Note: Saved/restored files
 
 5. Edit terraform variables and Run the following commands to build required AMIs and to provision a Concourse CI cluster
    ```
+   $ terraform init
    $ ./build-amis.sh
    $ vi ./variables.tf
    $ ./terraform.sh get
