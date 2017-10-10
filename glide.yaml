@@ -1,4 +1,4 @@
-package: github.com/mumoshu/concourse-aws
+package: github.com/analytically/concourse-aws
 import:
 - package: github.com/spf13/cobra
 - package: github.com/spf13/viper

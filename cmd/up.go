@@ -23,7 +23,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/mumoshu/concourse-aws/concourse"
+	"github.com/analytically/concourse-aws/concourse"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
 )

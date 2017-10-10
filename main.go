@@ -14,7 +14,7 @@
 
 package main
 
-import "github.com/mumoshu/concourse-aws/cmd"
+import "github.com/analytically/concourse-aws/cmd"
 
 func main() {
 	cmd.Execute()
