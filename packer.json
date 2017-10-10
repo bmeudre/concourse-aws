@@ -26,7 +26,7 @@
     "ssh_username": "ec2-user",
     "ssh_file_transfer_method": "sftp",
     "ssh_pty": true,
-    "ami_name": "packer-concourse-v3.5.0-{{timestamp}}",
+    "ami_name": "packer-concourse-v3.5.0-{{timestamp}}"
   }],
   "provisioners": [{
     "type": "shell",
