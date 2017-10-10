@@ -27,7 +27,6 @@
     "ssh_file_transfer_method": "sftp",
     "ssh_pty": true,
     "ami_name": "packer-concourse-v3.5.0-{{timestamp}}",
-    "profile": "bitmola-dev"
   }],
   "provisioners": [{
     "type": "shell",
