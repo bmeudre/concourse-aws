@@ -4,7 +4,7 @@ http://www.slideshare.net/mumoshu/autoscaled-concourse-ci-on-aws-wo-bosh
 
 ## Recommended Usage: Using `concourse-aws` binary
 
-1. Install [packer](https://github.com/mitchellh/packer) and [terraform (1.0.7+)](https://github.com/hashicorp/terraform)
+1. Install [packer](https://github.com/mitchellh/packer) and [terraform (0.10.7+)](https://github.com/hashicorp/terraform)
   
 2. Create 1 VPC and 2 subnets in it
 
