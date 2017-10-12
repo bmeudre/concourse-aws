@@ -15,7 +15,7 @@ echo "${tsa_host_key}" > $CONCOURSE_PATH/tsa_host_key
 echo "${tsa_authorized_keys}" > $CONCOURSE_PATH/tsa_authorized_keys
 echo "${postgres_data_source}" > $CONCOURSE_PATH/postgres_data_source
 echo "${external_url}" > $CONCOURSE_PATH/external_url
-echo "${github_auth_organizations}" > $CONCOURSE_PATH/github_auth_arganizations
+echo "${github_auth_organizations}" > $CONCOURSE_PATH/github_auth_organizations
 echo "${github_auth_teams}" > $CONCOURSE_PATH/github_auth_teams
 echo "${github_auth_users}" > $CONCOURSE_PATH/github_auth_users
 curl http://169.254.169.254/latest/meta-data/local-ipv4 > $CONCOURSE_PATH/peer_ip
