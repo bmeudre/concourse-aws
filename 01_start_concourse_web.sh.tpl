@@ -21,7 +21,7 @@ echo "${github_auth_users}" > $CONCOURSE_PATH/github_auth_users
 curl http://169.254.169.254/latest/meta-data/local-ipv4 > $CONCOURSE_PATH/peer_ip
 
 if [ "z${basic_auth_username}" != "z" ]; then
-  BASIC_AUTH_OPTS="--basic-auth-username ${basic_auth_username} --basic_auth_password ${basic_auth_password}"
+  BASIC_AUTH_OPTS="--basic-auth-username ${basic_auth_username} --basic-auth-password ${basic_auth_password}"
 fi
 
 GITHUB_AUTH_OPTS=()
