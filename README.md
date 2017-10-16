@@ -31,7 +31,7 @@ And then, `concourse-aws` will prompt you to provide required parameters(region,
 ```
 $ git pull --rebase origin master
 $ ./build-ami.sh
-$ vi cluster.yml # and update `ami_id` with the one produced by `build-concourse-ami.sh`
+$ vi cluster.yml # and update `ami_id` with the one produced by `build-ami.sh`
 $ ./concourse-aws up
 ```
 
