@@ -20,7 +20,7 @@ git clone https://github.com/analytically/concourse-aws
 cd concourse-aws
 
 terraform init
-./build-amis.sh
+./build-ami.sh
 ./concourse-aws up
 ```
 
@@ -30,7 +30,7 @@ And then, `concourse-aws` will prompt you to provide required parameters(region,
 
 ```
 $ git pull --rebase origin master
-$ ./build-concourse-ami.sh
+$ ./build-ami.sh
 $ vi cluster.yml # and update `ami_id` with the one produced by `build-concourse-ami.sh`
 $ ./concourse-aws up
 ```
@@ -92,7 +92,7 @@ Note: Saved/restored files
 5. Edit terraform variables and Run the following commands to build required AMIs and to provision a Concourse CI cluster
    ```
    $ terraform init
-   $ ./build-amis.sh
+   $ ./build-ami.sh
    $ vi ./variables.tf
    $ ./terraform.sh get
    $ ./terraform.sh plan
