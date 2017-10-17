@@ -13,11 +13,13 @@ mkdir -p $CONCOURSE_PATH
 echo "${tsa_host}" > $CONCOURSE_PATH/tsa_host
 echo "${tsa_public_key}" > $CONCOURSE_PATH/tsa_public_key
 echo "${tsa_worker_private_key}" > $CONCOURSE_PATH/tsa_worker_private_key
+curl http://169.254.169.254/latest/meta-data/instance-id > $CONCOURSE_PATH/instance_id
 curl http://169.254.169.254/latest/meta-data/local-ipv4 > $CONCOURSE_PATH/peer_ip
 
 cd $CONCOURSE_PATH
 
 concourse worker \
+  --name $(cat instance_id) \
   --garden-log-level error \
   --work-dir $CONCOURSE_PATH \
   --peer-ip $(cat peer_ip) \
