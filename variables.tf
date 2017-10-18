@@ -35,12 +35,12 @@ variable "worker_instance_type" {
 }
 
 variable "web_spot_price" {
-  default = "0.04"
+  default = "0.15"
   description = "The price to use for reserving web spot instances."
 }
 
 variable "worker_spot_price" {
-  default = "0.6"
+  default = "0.15"
   description = "The price to use for reserving worker spot instances."
 }
 

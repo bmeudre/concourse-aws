@@ -177,16 +177,6 @@ resource "aws_ssm_parameter" "db_password" {
   }
 }
 
-resource "aws_ssm_parameter" "github_auth_client_secret" {
-  name  = "concourse_github_auth_client_secret"
-  type  = "SecureString"
-  value = "${var.github_auth_client_secret}"
-
-  lifecycle {
-    ignore_changes = ["value"]
-  }
-}
-
 data "template_file" "install_concourse" {
   template = "${file("${path.module}/00_install_concourse.sh.tpl")}"
 }
@@ -203,7 +193,7 @@ data "template_file" "start_concourse_web" {
     basic_auth_username = "${var.basic_auth_username}"
     basic_auth_password = "${var.basic_auth_password}"
     github_auth_client_id = "${var.github_auth_client_id}"
-    github_auth_client_secret = "${aws_ssm_parameter.github_auth_client_secret.value}"
+    github_auth_client_secret = "${var.github_auth_client_secret}"
     github_auth_organizations = "${var.github_auth_organizations}"
     github_auth_teams = "${var.github_auth_teams}"
     github_auth_users = "${var.github_auth_users}"
