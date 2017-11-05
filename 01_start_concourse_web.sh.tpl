@@ -3,6 +3,10 @@
 exec > /var/log/01_start_concourse_web.log 2>&1
 set -x
 
+sudo modprobe tcp_bbr
+sudo modprobe sch_fq
+sudo sysctl -w net.ipv4.tcp_congestion_control=bbr
+
 CONCOURSE_PATH=/var/lib/concourse
 
 mkdir -p $CONCOURSE_PATH
