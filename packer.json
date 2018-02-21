@@ -26,14 +26,14 @@
     "ssh_username": "ec2-user",
     "ssh_file_transfer_method": "sftp",
     "ssh_pty": true,
-    "ami_name": "packer-concourse-v3.6.0-{{timestamp}}"
+    "ami_name": "concourse-v3.9.0-{{timestamp}}"
   }],
   "provisioners": [{
     "type": "shell",
     "inline": [
       "unset HISTFILE",
       "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done",
-      "curl -L https://github.com/concourse/concourse/releases/download/v3.6.0/concourse_linux_amd64 -o concourse",
+      "curl -L https://github.com/concourse/concourse/releases/download/v3.9.0/concourse_linux_amd64 -o concourse",
       "chmod +x concourse",
       "sudo mv concourse /usr/bin/concourse",
       "concourse -version"

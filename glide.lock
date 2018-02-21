@@ -1,5 +1,5 @@
 hash: fdc8716a742094323704bb782ad9f160781994599812b37d026ef527e94b58dc
-updated: 2017-10-10T15:55:08.570466+02:00
+updated: 2018-02-15T14:31:14.670745Z
 imports:
 - name: github.com/aws/aws-sdk-go
   version: 8fd3586fd7d0a1ae87031b09da0d214588460e51
@@ -31,11 +31,11 @@ imports:
   - service/s3/s3iface
   - service/s3/s3manager
 - name: github.com/go-ini/ini
-  version: c787282c39ac1fc618827141a1f762240def08a3
+  version: 32e4be5f41bb918afb6e37c07426e2ddbcb6647e
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/jmespath/go-jmespath
-  version: bd40a432e4c76585ef6b72d3fd96fb9b6dc7b68d
+  version: c2b33e8439af944379acbdd9c3a5fe0bc44bd8a5
 - name: github.com/mitchellh/go-homedir
   version: b8bc1bf767474819792c23f32d8286a45736f1c6
 - name: github.com/spf13/cobra

@@ -335,6 +335,14 @@ func TerraformRun(subcommand string, c *concourse.Config) {
 		)
 	}
 
+	if (subcommand == "apply") {
+	    args = append(args, "-auto-approve")
+	}
+
+	if (subcommand == "destroy") {
+	    args = append(args, "-force")
+    }
+
 	log.Println("Running terraform get")
 	get := exec.Command("terraform", "get")
 	get.Stdout = os.Stdout

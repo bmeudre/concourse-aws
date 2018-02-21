@@ -105,7 +105,13 @@ resource "aws_autoscaling_group" "web-asg" {
   tag {
     key = "Name"
     value = "${var.prefix}concourse-web"
-    propagate_at_launch = "true"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key = "chaosMonkey.aggressionCoefficient"
+    value = "0.3" // a third of the default probability
+    propagate_at_launch = false
   }
 
   lifecycle {
@@ -125,7 +131,13 @@ resource "aws_autoscaling_group" "worker-asg" {
   tag {
     key = "Name"
     value = "${var.prefix}concourse-worker"
-    propagate_at_launch = "true"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key = "chaosMonkey.aggressionCoefficient"
+    value = "0.3" // a third of the default probability
+    propagate_at_launch = false
   }
 
   lifecycle {
@@ -440,6 +452,7 @@ resource "aws_db_instance" "concourse" {
   backup_retention_period = 3
   backup_window = "09:45-10:15"
   maintenance_window = "sun:04:30-sun:05:30"
+  final_snapshot_identifier = "concourse-master"
 }
 
 resource "aws_db_subnet_group" "concourse" {

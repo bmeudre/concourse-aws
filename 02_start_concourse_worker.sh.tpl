@@ -23,6 +23,7 @@ concourse worker \
   --name $(cat instance_id) \
   --garden-log-level error \
   --work-dir $CONCOURSE_PATH \
+  --certs-dir /etc/pki/tls/certs \
   --peer-ip $(cat peer_ip) \
   --bind-ip $(cat peer_ip) \
   --baggageclaim-bind-ip $(cat peer_ip) \
