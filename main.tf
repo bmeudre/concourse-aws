@@ -154,6 +154,10 @@ resource "aws_launch_configuration" "web-lc" {
   user_data = "${data.template_cloudinit_config.web.rendered}"
   key_name = "${var.key_name}"
 
+  root_block_device {
+    volume_type = "gp2"
+  }
+  
   lifecycle {
     create_before_destroy = true
   }
@@ -171,7 +175,7 @@ resource "aws_launch_configuration" "worker-lc" {
 
   root_block_device {
     volume_type = "gp2"
-    volume_size = "30"
+    volume_size = "100"
   }
 
   lifecycle {
