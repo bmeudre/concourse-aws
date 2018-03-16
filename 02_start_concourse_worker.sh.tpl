@@ -7,6 +7,8 @@ sudo modprobe tcp_bbr
 sudo modprobe sch_fq
 sudo sysctl -w net.ipv4.tcp_congestion_control=bbr
 
+sudo modprobe crc32c-intel
+
 CONCOURSE_PATH=/var/lib/concourse
 
 mkdir -p $CONCOURSE_PATH
@@ -27,6 +29,7 @@ concourse worker \
   --peer-ip $(cat peer_ip) \
   --bind-ip $(cat peer_ip) \
   --baggageclaim-bind-ip $(cat peer_ip) \
+  --baggageclaim-driver btrfs \
   --tsa-host $(cat tsa_host) \
   --tsa-public-key tsa_public_key \
   --tsa-worker-private-key tsa_worker_private_key \
