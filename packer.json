@@ -1,12 +1,9 @@
 {
   "builders": [{
     "type": "amazon-ebs",
-    "region": "us-west-2",
     "source_ami_filter": {
       "filters": {
-        "virtualization-type": "hvm",
-        "name": "amzn-ami*-ebs",
-        "root-device-type": "ebs"
+        "name": "amzn-ami-hvm-2018*-gp2"
       },
       "owners": [
         "137112412989",
@@ -20,20 +17,32 @@
       ],
       "most_recent": true
     },
+    "run_tags": {
+      "Name": "concourse-ami-builder",
+      "Source AMI ID": "{{ .SourceAMI }}",
+      "AMI Build Region": "{{ .BuildRegion }}"
+    },
+    "run_volume_tags": {
+      "Source AMI ID": "{{ .SourceAMI }}",
+      "AMI Build Region": "{{ .BuildRegion }}"
+    },
     "instance_type": "t2.small",
-    "ebs_optimized": true,
     "ena_support": true,
     "ssh_username": "ec2-user",
     "ssh_file_transfer_method": "sftp",
     "ssh_pty": true,
-    "ami_name": "concourse-v3.9.2-{{timestamp}}"
+    "ami_name": "concourse-v3.13.0-{{timestamp}}",
+    "tags": {
+      "Source AMI ID": "{{ .SourceAMI }}",
+      "AMI Build Region": "{{ .BuildRegion }}"
+    }
   }],
   "provisioners": [{
     "type": "shell",
     "inline": [
       "unset HISTFILE",
       "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done",
-      "curl -L https://github.com/concourse/concourse/releases/download/v3.9.2/concourse_linux_amd64 -o concourse",
+      "curl -L https://github.com/concourse/concourse/releases/download/v3.13.0/concourse_linux_amd64 -o concourse",
       "chmod +x concourse",
       "sudo mv concourse /usr/bin/concourse",
       "concourse -version"

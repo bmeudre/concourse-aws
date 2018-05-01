@@ -73,6 +73,7 @@ concourse web --session-signing-key session_signing_key \
   --tsa-host-key tsa_host_key --tsa-authorized-keys tsa_authorized_keys \
   --external-url $(cat external_url) \
   --postgres-data-source $(cat postgres_data_source) \
+  --auth-duration 72h \
   $BASIC_AUTH_OPTS \
   "$${GITHUB_AUTH_OPTS[@]}" \
   2>&1 > $CONCOURSE_PATH/concourse_web.log &

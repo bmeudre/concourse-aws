@@ -5,7 +5,7 @@ provider "aws" {
 
 # Create an IAM role for Concourse workers, allow S3 access - https://github.com/concourse/s3-resource
 resource "aws_iam_role" "worker_iam_role" {
-  name = "worker_iam_role"
+  name = "concourse_worker_iam_role"
   path = "/"
   assume_role_policy = <<EOF
 {
@@ -23,20 +23,88 @@ EOF
 }
 
 resource "aws_iam_instance_profile" "worker_iam_instance_profile" {
-  name = "worker_iam_instance_profile"
+  name = "concourse_worker_iam_instance_profile"
   role = "${aws_iam_role.worker_iam_role.name}"
 }
 
-resource "aws_iam_policy_attachment" "iam-ecr-policy-attach" {
-  name = "ecr-policy-attachment"
-  roles = ["${aws_iam_role.worker_iam_role.name}"]
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
+resource "aws_iam_role_policy" "concourse_worker_iam_policy" {
+  name = "concourse_worker_iam_policy"
+  role = "${aws_iam_role.worker_iam_role.id}"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "ec2:AttachVolume",
+        "ec2:AuthorizeSecurityGroupIngress",
+        "ec2:CopyImage",
+        "ec2:CreateImage",
+        "ec2:CreateKeypair",
+        "ec2:CreateSecurityGroup",
+        "ec2:CreateSnapshot",
+        "ec2:CreateTags",
+        "ec2:CreateVolume",
+        "ec2:DeleteKeypair",
+        "ec2:DeleteSecurityGroup",
+        "ec2:DeleteSnapshot",
+        "ec2:DeleteVolume",
+        "ec2:DeregisterImage",
+        "ec2:DescribeAvailabilityZones",
+        "ec2:DescribeImageAttribute",
+        "ec2:DescribeImages",
+        "ec2:DescribeInstances",
+        "ec2:DescribeInstanceStatus",
+        "ec2:DescribeRegions",
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeSnapshots",
+        "ec2:DescribeSubnets",
+        "ec2:DescribeTags",
+        "ec2:DescribeVolumes",
+        "ec2:DetachVolume",
+        "ec2:GetPasswordData",
+        "ec2:ModifyImageAttribute",
+        "ec2:ModifyInstanceAttribute",
+        "ec2:ModifySnapshotAttribute",
+        "ec2:RegisterImage",
+        "ec2:RunInstances",
+        "ec2:StopInstances",
+        "ec2:TerminateInstances",
+        "ecr:GetAuthorizationToken",
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:BatchDeleteImage",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:GetRepositoryPolicy",
+        "ecr:DescribeRepositories",
+        "ecr:ListImages",
+        "ecr:DescribeImages",
+        "ecr:BatchGetImage",
+        "ecr:InitiateLayerUpload",
+        "ecr:UploadLayerPart",
+        "ecr:CompleteLayerUpload",
+        "ecr:PutImage",
+        "ses:SendEmail",
+        "ses:SendRawEmail",
+        "dynamodb:*",
+        "ec2:AllocateAddress",
+        "ec2:AssociateAddress",
+        "ec2:DescribeAddresses",
+        "ec2:DisassociateAddress",
+        "codedeploy:*",
+        "s3:*",
+        "iam:GetPolicy",
+        "iam:GetPolicyVersion",
+        "iam:ListRoles",
+        "iam:PassRole",
+        "kms:List*",
+        "elasticmapreduce:*"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
 }
-
-resource "aws_iam_policy_attachment" "iam-s3-policy-attach" {
-  name = "ecr-policy-attachment"
-  roles = ["${aws_iam_role.worker_iam_role.name}"]
-  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+EOF
 }
 
 module "autoscaling_hooks" {
@@ -119,6 +187,11 @@ resource "aws_autoscaling_group" "web-asg" {
   }
 }
 
+resource "aws_placement_group" "worker_pg" {
+  name = "concourse-workers"
+  strategy = "cluster"
+}
+
 resource "aws_autoscaling_group" "worker-asg" {
   name = "${var.prefix}${aws_launch_configuration.worker-lc.name}-${var.ami}"
   availability_zones = ["${split(",", var.availability_zones)}"]
@@ -127,6 +200,7 @@ resource "aws_autoscaling_group" "worker-asg" {
   desired_capacity = "${var.worker_asg_desired}"
   launch_configuration = "${aws_launch_configuration.worker-lc.name}"
   vpc_zone_identifier = ["${split(",", var.subnet_id)}"]
+  placement_group = "${aws_placement_group.worker_pg.id}"
 
   tag {
     key = "Name"
@@ -441,10 +515,10 @@ resource "aws_security_group_rule" "allow_db_access_from_atc" {
 
 resource "aws_db_instance" "concourse" {
   depends_on = ["aws_security_group.concourse_db"]
-  identifier = "${var.prefix}concourse-master"
-  allocated_storage = "5"
+  identifier = "${var.prefix}concourse"
+  allocated_storage = "10"
   engine = "postgres"
-  engine_version = "9.6.6"
+  engine_version = "9.6.8"
   instance_class = "${var.db_instance_class}"
   storage_type = "gp2"
   name = "concourse"
@@ -456,7 +530,7 @@ resource "aws_db_instance" "concourse" {
   backup_retention_period = 3
   backup_window = "09:45-10:15"
   maintenance_window = "sun:04:30-sun:05:30"
-  final_snapshot_identifier = "concourse-master"
+  final_snapshot_identifier = "concourse"
 }
 
 resource "aws_db_subnet_group" "concourse" {

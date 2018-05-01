@@ -64,7 +64,7 @@ func mustBeIncludedIn(candidates []string) func(string) error {
 }
 
 func InteractivelyCreateConfig() *concourse.Config {
-	prefix := AskForRequiredInput("Prefix", AskOptions{Default: "mycompany-"})
+	prefix := AskForRequiredInput("Prefix", AskOptions{Default: ""})
 
 	regions := ListRegions()
 	region := AskForRequiredInput("Region", AskOptions{Candidates: regions, Validate: mustBeIncludedIn(regions), Default: "us-west-2"})

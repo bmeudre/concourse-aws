@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 0.9.11"
+  required_version = ">= 0.11.7"
 }
 
 variable "prefix" {

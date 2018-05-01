@@ -24,13 +24,14 @@ cd $CONCOURSE_PATH
 concourse worker \
   --name $(cat instance_id) \
   --garden-log-level error \
+  --garden-network-pool 10.254.0.0/16 \
+  --garden-max-containers 500 \
   --work-dir $CONCOURSE_PATH \
-  --certs-dir /etc/pki/tls/certs \
   --peer-ip $(cat peer_ip) \
   --bind-ip $(cat peer_ip) \
   --baggageclaim-bind-ip $(cat peer_ip) \
   --baggageclaim-driver btrfs \
-  --tsa-host $(cat tsa_host) \
+  --tsa-host $(cat tsa_host):2222 \
   --tsa-public-key tsa_public_key \
   --tsa-worker-private-key tsa_worker_private_key \
   2>&1 > $CONCOURSE_PATH/concourse_worker.log &
