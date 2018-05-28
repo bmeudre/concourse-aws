@@ -30,7 +30,7 @@ variable "web_instance_type" {
 }
 
 variable "worker_instance_type" {
-  default = "r4.large"
+  default = "c5.xlarge"
   description = "Concourse CI worker AWS instance type"
 }
 

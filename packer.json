@@ -3,7 +3,7 @@
     "type": "amazon-ebs",
     "source_ami_filter": {
       "filters": {
-        "name": "amzn-ami-hvm-2018*-gp2"
+        "name": "amzn2-ami-hvm-*-gp2"
       },
       "owners": [
         "137112412989",
