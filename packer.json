@@ -31,7 +31,7 @@
     "ssh_username": "ec2-user",
     "ssh_file_transfer_method": "sftp",
     "ssh_pty": true,
-    "ami_name": "concourse-v3.13.0-{{timestamp}}",
+    "ami_name": "concourse-v3.14.1-{{timestamp}}",
     "tags": {
       "Source AMI ID": "{{ .SourceAMI }}",
       "AMI Build Region": "{{ .BuildRegion }}"
@@ -41,8 +41,10 @@
     "type": "shell",
     "inline": [
       "unset HISTFILE",
-      "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done",
-      "curl -L https://github.com/concourse/concourse/releases/download/v3.13.0/concourse_linux_amd64 -o concourse",
+      "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init to finish...'; sleep 3; done",
+      "sudo yum -y update",
+      "echo 'vm.swappiness = 0' | sudo tee --append /etc/sysctl.conf",
+      "curl -L https://github.com/concourse/concourse/releases/download/v3.14.1/concourse_linux_amd64 -o concourse",
       "chmod +x concourse",
       "sudo mv concourse /usr/bin/concourse",
       "concourse -version"

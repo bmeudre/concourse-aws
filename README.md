@@ -125,6 +125,10 @@ Note: Saved/restored files
 * Maybe more up-to-date than [starkandwayne/terraform-concourse](https://github.com/starkandwayne/terraform-concourse)
 * [motevets/concourse-in-a-box](https://github.com/motevets/concourse-in-a-box) to quickly get concourse up-and-running on a single Ubuntu 14.04 EC2 instance
 
+## Pruning workers
+
+```for worker_id in $(fly -t target workers | awk '{print $1}'); do fly -t target prune-worker -w ${worker_id}; done```
+
 ## Contributing
 
 ### Making changes

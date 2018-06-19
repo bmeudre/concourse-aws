@@ -9,9 +9,13 @@ sudo sysctl -w net.ipv4.tcp_congestion_control=bbr
 
 sudo modprobe crc32c-intel
 
-CONCOURSE_PATH=/var/lib/concourse
+CONCOURSE_PATH=/concourse
 
-mkdir -p $CONCOURSE_PATH
+sudo yum install -y btrfs-progs
+
+sudo mkfs.btrfs /dev/nvme1n1
+sudo mkdir -p $CONCOURSE_PATH
+sudo mount /dev/nvme1n1 $CONCOURSE_PATH
 
 echo "${tsa_host}" > $CONCOURSE_PATH/tsa_host
 echo "${tsa_public_key}" > $CONCOURSE_PATH/tsa_public_key

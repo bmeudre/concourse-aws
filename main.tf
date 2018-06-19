@@ -1,7 +1,11 @@
 # Specify the provider and access details
 provider "aws" {
+  version = "~> 1.18"
+
   region = "${var.aws_region}"
 }
+
+data "aws_caller_identity" "current" {}
 
 # Create an IAM role for Concourse workers, allow S3 access - https://github.com/concourse/s3-resource
 resource "aws_iam_role" "worker_iam_role" {
@@ -12,10 +16,20 @@ resource "aws_iam_role" "worker_iam_role" {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Action": "sts:AssumeRole",
-      "Principal": {"AWS": "*"},
+      "Sid": "",
       "Effect": "Allow",
-      "Sid": ""
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    },
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "${data.aws_caller_identity.current.arn}"
+      },
+      "Action": "sts:AssumeRole"
     }
   ]
 }
@@ -36,68 +50,28 @@ resource "aws_iam_role_policy" "concourse_worker_iam_policy" {
   "Statement": [
     {
       "Action": [
-        "ec2:AttachVolume",
-        "ec2:AuthorizeSecurityGroupIngress",
-        "ec2:CopyImage",
-        "ec2:CreateImage",
-        "ec2:CreateKeypair",
-        "ec2:CreateSecurityGroup",
-        "ec2:CreateSnapshot",
-        "ec2:CreateTags",
-        "ec2:CreateVolume",
-        "ec2:DeleteKeypair",
-        "ec2:DeleteSecurityGroup",
-        "ec2:DeleteSnapshot",
-        "ec2:DeleteVolume",
-        "ec2:DeregisterImage",
-        "ec2:DescribeAvailabilityZones",
-        "ec2:DescribeImageAttribute",
-        "ec2:DescribeImages",
-        "ec2:DescribeInstances",
-        "ec2:DescribeInstanceStatus",
-        "ec2:DescribeRegions",
-        "ec2:DescribeSecurityGroups",
-        "ec2:DescribeSnapshots",
-        "ec2:DescribeSubnets",
-        "ec2:DescribeTags",
-        "ec2:DescribeVolumes",
-        "ec2:DetachVolume",
-        "ec2:GetPasswordData",
-        "ec2:ModifyImageAttribute",
-        "ec2:ModifyInstanceAttribute",
-        "ec2:ModifySnapshotAttribute",
-        "ec2:RegisterImage",
-        "ec2:RunInstances",
-        "ec2:StopInstances",
-        "ec2:TerminateInstances",
-        "ecr:GetAuthorizationToken",
-        "ecr:BatchCheckLayerAvailability",
-        "ecr:BatchDeleteImage",
-        "ecr:GetDownloadUrlForLayer",
-        "ecr:GetRepositoryPolicy",
-        "ecr:DescribeRepositories",
-        "ecr:ListImages",
-        "ecr:DescribeImages",
-        "ecr:BatchGetImage",
-        "ecr:InitiateLayerUpload",
-        "ecr:UploadLayerPart",
-        "ecr:CompleteLayerUpload",
-        "ecr:PutImage",
-        "ses:SendEmail",
-        "ses:SendRawEmail",
-        "dynamodb:*",
-        "ec2:AllocateAddress",
-        "ec2:AssociateAddress",
-        "ec2:DescribeAddresses",
-        "ec2:DisassociateAddress",
+        "acm:*",
+        "autoscaling:*",
+        "cloudtrail:*",
+        "cloudwatch:*",
         "codedeploy:*",
-        "s3:*",
+        "dynamodb:*",
+        "ec2:*",
+        "ecr:*",
+        "ecs:*",
+        "elasticloadbalancing:*",
+        "elasticmapreduce:*",
         "iam:GetPolicy",
         "iam:GetPolicyVersion",
+        "iam:GetRole",
         "iam:ListRoles",
         "iam:PassRole",
         "kms:List*",
-        "elasticmapreduce:*"
+        "logs:*",
+        "route53:*",
+        "s3:*",
+        "ses:*",
+        "ssm:*"
       ],
       "Effect": "Allow",
       "Resource": "*"
@@ -162,7 +136,6 @@ resource "aws_autoscaling_group" "web-asg" {
   # * Recreation of the launch configuration triggers recreation of this ASG and its EC2 instances
   # * Modification to the lc (change to referring AMI) triggers recreation of this ASG
   name = "${var.prefix}${aws_launch_configuration.web-lc.name}-${var.ami}"
-  availability_zones = ["${split(",", var.availability_zones)}"]
   max_size = "${var.asg_max}"
   min_size = "${var.asg_min}"
   desired_capacity = "${var.web_asg_desired}"
@@ -187,20 +160,13 @@ resource "aws_autoscaling_group" "web-asg" {
   }
 }
 
-resource "aws_placement_group" "worker_pg" {
-  name = "concourse-workers"
-  strategy = "cluster"
-}
-
 resource "aws_autoscaling_group" "worker-asg" {
   name = "${var.prefix}${aws_launch_configuration.worker-lc.name}-${var.ami}"
-  availability_zones = ["${split(",", var.availability_zones)}"]
   max_size = "${var.asg_max}"
   min_size = "${var.asg_min}"
   desired_capacity = "${var.worker_asg_desired}"
   launch_configuration = "${aws_launch_configuration.worker-lc.name}"
   vpc_zone_identifier = ["${split(",", var.subnet_id)}"]
-  placement_group = "${aws_placement_group.worker_pg.id}"
 
   tag {
     key = "Name"
@@ -249,7 +215,6 @@ resource "aws_launch_configuration" "worker-lc" {
 
   root_block_device {
     volume_type = "gp2"
-    volume_size = "100"
   }
 
   lifecycle {
@@ -516,7 +481,7 @@ resource "aws_security_group_rule" "allow_db_access_from_atc" {
 resource "aws_db_instance" "concourse" {
   depends_on = ["aws_security_group.concourse_db"]
   identifier = "${var.prefix}concourse"
-  allocated_storage = "10"
+  allocated_storage = "20"
   engine = "postgres"
   engine_version = "9.6.8"
   instance_class = "${var.db_instance_class}"
