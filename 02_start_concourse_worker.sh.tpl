@@ -32,8 +32,8 @@ concourse worker \
   --garden-max-containers 500 \
   --work-dir $CONCOURSE_PATH \
   --peer-ip $(cat peer_ip) \
-  --bind-ip $(cat peer_ip) \
-  --baggageclaim-bind-ip $(cat peer_ip) \
+  --bind-ip 0.0.0.0 \
+  --baggageclaim-bind-ip 0.0.0.0 \
   --baggageclaim-driver btrfs \
   --tsa-host $(cat tsa_host):2222 \
   --tsa-public-key tsa_public_key \
