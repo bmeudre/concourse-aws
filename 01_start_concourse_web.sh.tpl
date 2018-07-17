@@ -74,6 +74,8 @@ concourse web --session-signing-key session_signing_key \
   --external-url $(cat external_url) \
   --postgres-data-source $(cat postgres_data_source) \
   --auth-duration 72h \
+  --log-level error \
+  --tsa-log-level error \
   $BASIC_AUTH_OPTS \
   "$${GITHUB_AUTH_OPTS[@]}" \
   2>&1 > $CONCOURSE_PATH/concourse_web.log &
