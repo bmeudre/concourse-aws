@@ -66,6 +66,7 @@ resource "aws_iam_role_policy" "concourse_worker_iam_policy" {
         "iam:GetRole",
         "iam:ListRoles",
         "iam:PassRole",
+        "kms:Describe*",
         "kms:List*",
         "logs:*",
         "route53:*",
