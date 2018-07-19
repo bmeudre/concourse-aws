@@ -168,6 +168,7 @@ resource "aws_autoscaling_group" "worker-asg" {
   desired_capacity = "${var.worker_asg_desired}"
   launch_configuration = "${aws_launch_configuration.worker-lc.name}"
   vpc_zone_identifier = ["${split(",", var.subnet_id)}"]
+  protect_from_scale_in = true
 
   tag {
     key = "Name"
